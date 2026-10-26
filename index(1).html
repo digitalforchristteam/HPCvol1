@@ -1,0 +1,262 @@
+<!doctype html>
+<!--
+SERVETOGETHER - HOW TO PUBLISH (this one file is the whole website)
+GitHub: 1) Sign up at github.com. 2) New repository, name it servetogether, Create. 3) Click "uploading an existing file", drag in this index.html, Commit changes.
+Cloudflare Pages: 1) Sign up at dash.cloudflare.com. 2) Workers & Pages > Create > Pages > Connect to Git, pick the repo. 3) Leave build command empty, output directory "/", Save and Deploy. 4) Your site appears at yourname.pages.dev.
+Note: data is saved only in each visitor's own browser. Shared accounts, roles, database and email reminders are not built yet.
+-->
+
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ServeTogether – church volunteer scheduling and RSVPs</title>
+<meta name="description" content="Publish one event, set the programme, and let volunteers RSVP Yes or No in seconds. See who is still needed at a glance.">
+<meta property="og:title" content="ServeTogether">
+<meta property="og:description" content="Stop chasing volunteers on WhatsApp. Plan events, collect RSVPs, see staffing gaps.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌈</text></svg>">
+<style>
+:root{--coral:#ff5d6c;--orange:#ff9a3c;--sun:#ffd23f;--mint:#2ecc9a;--sky:#3ba7ff;--violet:#7b5cff;--mag:#e83e9c;--ink:#1d1a3a;--soft:#f6f4ff;--card:#fff;--mut:#5e5a7e;--rainbow:linear-gradient(90deg,var(--coral),var(--orange),var(--sun),var(--mint),var(--sky),var(--violet),var(--mag))}
+@media(prefers-color-scheme:dark){:root{--ink:#f1efff;--soft:#14122b;--card:#1f1c3d;--mut:#b4b0d6}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:17px/1.55 "Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--soft);padding-bottom:84px}
+h1,h2,h3{font-family:Georgia,"Palatino Linotype",serif;line-height:1.1;margin:0 0 .5em}
+h1{font-size:clamp(2.4rem,9vw,4.6rem)}h2{font-size:1.9rem}h3{font-size:1.2rem}
+a{color:inherit}button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+.wrap{max-width:980px;margin:auto;padding:0 18px}
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--soft) 88%,transparent);backdrop-filter:blur(10px);border-bottom:4px solid transparent;border-image:var(--rainbow) 1}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font:700 1.3rem Georgia,serif;text-decoration:none}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;background:var(--card);box-shadow:0 -4px 20px #7b5cff22;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;min-height:64px;border:0;background:none;color:var(--mut);cursor:pointer;font-size:.8rem;transition:.2s}
+.nav button b{display:block;font-size:1.4rem}.nav button[aria-current=page]{color:var(--violet);font-weight:700;transform:translateY(-3px)}
+@media(min-width:760px){.nav{position:static;box-shadow:none;background:none;gap:8px}.nav button{min-height:44px;flex:none;padding:0 14px;border-radius:99px}.nav button b{display:inline;font-size:1rem;margin-right:6px}.nav button[aria-current=page]{background:var(--card);transform:none}header.top .wrap{height:68px}body{padding-bottom:0}.nav-slot{display:block}}
+.hero{position:relative;overflow:hidden;padding:56px 0 64px;text-align:center}
+.hero p{max-width:34ch;margin:0 auto 1.4em;font-size:1.2rem;color:var(--mut)}
+.blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55;animation:drift 14s ease-in-out infinite alternate;z-index:0}
+.hero .wrap{position:relative;z-index:1}
+@keyframes drift{to{transform:translate(60px,40px) scale(1.25)}}
+.rb{background:var(--rainbow);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:slide 6s linear infinite}
+@keyframes slide{to{background-position:200% 0}}
+.btn{display:inline-block;border:0;border-radius:99px;padding:14px 26px;min-height:48px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--violet),var(--mag));cursor:pointer;text-decoration:none;box-shadow:0 8px 20px #7b5cff44;transition:transform .15s}
+.btn:hover{transform:translateY(-2px) scale(1.03)}.btn:active{transform:scale(.97)}
+.btn.alt{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--violet)}
+.btn.yes{background:linear-gradient(135deg,var(--mint),var(--sky))}.btn.no{background:linear-gradient(135deg,var(--coral),var(--orange))}
+.card{background:var(--card);border-radius:22px;padding:20px;margin:0 0 16px;box-shadow:0 6px 24px #7b5cff18;animation:pop .35s both}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.feat{border-top:6px solid var(--c)}.feat .ic{font-size:2rem;display:inline-block;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
+label{display:block;font-weight:700;margin:12px 0 4px}
+input,select{width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:2px solid #b9b2ee;background:var(--card);color:var(--ink)}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.bar{height:14px;border-radius:99px;background:#7b5cff22;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--rainbow);transition:width .8s cubic-bezier(.2,.9,.3,1.2)}
+.tag{display:inline-block;padding:2px 12px;border-radius:99px;font-size:.85rem;font-weight:700;color:#fff}
+.full{background:var(--mint)}.gap{background:var(--coral)}
+.tl{border-left:5px solid var(--c);padding:4px 0 4px 16px;margin:0 0 14px}
+.empty{text-align:center;color:var(--mut);padding:30px 10px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.days button{min-height:74px;border-radius:16px;border:2px solid transparent;cursor:pointer;color:var(--ink);background:var(--card);font-size:.8rem}
+.days button[data-s=yes]{background:var(--mint);color:#06281d}.days button[data-s=no]{background:var(--coral);color:#fff}
+.view{display:none}.view.on{display:block;animation:pop .4s both}
+.conf{position:fixed;top:-20px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall 2.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+small,.mut{color:var(--mut)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="#home">🌈 ServeTogether</a>
+<nav class="nav" aria-label="Main">
+<button data-go="home"><b>🏠</b>Home</button><button data-go="events"><b>📅</b>Events</button><button data-go="people"><b>👥</b>People</button><button data-go="availability"><b>✋</b>Availability</button><button data-go="about"><b>ℹ️</b>About</button></nav><button class="btn alt" data-go="inbox" id="bell" style="padding:6px 14px;min-height:44px" aria-label="Notifications">🔔<span id="bc"></span></button></div></header>
+
+<main class="wrap">
+<section id="home" class="view">
+ <div class="hero"><div class="blob" style="width:260px;height:260px;background:var(--coral);left:-60px;top:0"></div><div class="blob" style="width:300px;height:300px;background:var(--sky);right:-80px;top:40px;animation-delay:-5s"></div><div class="blob" style="width:200px;height:200px;background:var(--sun);left:35%;bottom:-60px;animation-delay:-9s"></div>
+ <div class="wrap"><h1>Fill every role without <span class="rb">chasing anyone</span></h1>
+ <p>Build an event programme, set how many helpers each slot needs, and let volunteers answer Yes or No in one tap.</p>
+ <button class="btn" data-go="events">Plan your first event</button> <button class="btn alt" data-go="availability">Set my availability</button></div></div>
+ <div class="grid">
+  <div class="card feat" style="--c:var(--coral)"><span class="ic">🗓️</span><h3>Programme builder</h3><p>Add activities with times and headcount. Overlaps are flagged before you save.</p></div>
+  <div class="card feat" style="--c:var(--mint)"><span class="ic">✅</span><h3>One-tap RSVP</h3><p>Yes or No, with an optional reason that volunteers never have to give.</p></div>
+  <div class="card feat" style="--c:var(--violet)"><span class="ic">📊</span><h3>Live staffing gaps</h3><p>See “3 of 4 filled” for every activity, updated the moment someone responds.</p></div>
+ </div>
+</section>
+
+<section id="events" class="view">
+ <h2>Events</h2>
+ <div id="evList"></div>
+ <details class="card" id="newEv"><summary><b>＋ Create an event</b></summary>
+  <label for="en">Event name</label><input id="en" placeholder="Community celebration">
+  <div class="row"><div><label for="ed">Date</label><input id="ed" type="date"></div><div><label for="ev">Venue</label><input id="ev" placeholder="Church hall"></div></div>
+  <label for="erc">RSVPs close (optional)</label><input id="erc" type="datetime-local"><button class="btn" id="saveEv" style="margin-top:16px">Save event</button>
+ </details>
+</section>
+
+<section id="detail" class="view"></section>
+
+<section id="availability" class="view">
+ <h2>My availability</h2>
+ <p class="mut">Tap a day to cycle: unspecified, available, unavailable. Leaders only see these three states, never your reasons. Saved on this device.</p>
+ <div class="card"><div class="days" id="days"></div>
+ <p><span class="tag full">Available</span> <span class="tag gap">Unavailable</span></p></div>
+</section>
+
+<section id="people" class="view">
+ <h2>People</h2>
+ <p class="mut">Add anyone you want to reach. Contact buttons open WhatsApp or your email app with the message ready to send. Details stay on this device.</p>
+ <div id="pList"></div>
+ <details class="card"><summary><b>＋ Add a person</b></summary>
+  <label for="pn">Name</label><input id="pn" autocomplete="off">
+  <label for="pw">WhatsApp number</label><input id="pw" type="tel" placeholder="07123 456789 or +44 7123 456789">
+  <label for="pe">Email (optional)</label><input id="pe" type="email">
+  <label for="pr">Role</label><select id="pr"><option>Volunteer</option><option>Leader</option><option>Admin</option></select>
+  <p id="perr" role="alert" style="color:var(--coral);font-weight:700"></p>
+  <button class="btn" id="addP">Save person</button></details>
+ <div class="card"><h3>Message wording</h3>
+  <label for="tpl">Use {name}, {event} and {date}</label><input id="tpl">
+  <label for="cc">Country code for numbers starting with 0</label><input id="cc" inputmode="numeric"></div>
+</section>
+
+<section id="inbox" class="view"><h2>Notifications</h2><div id="nList"></div></section>
+
+<section id="about" class="view">
+ <h2>About this version</h2>
+ <div class="card"><p>This is the front-end first release. Data is stored in your own browser, so it is not yet shared between people. Accounts, shared database, roles and email reminders come next, using Cloudflare’s free tools.</p>
+ <p class="mut">Add a privacy notice reviewed by a qualified person before real volunteer data is collected.</p></div>
+ <div class="card"><h3>Your data</h3><p class="mut">Everything is stored only in this browser. Download a backup, or delete it all.</p>
+ <button class="btn alt" onclick="backup()">Download backup</button> <button class="btn no" onclick="wipe()">Delete all my data</button></div>
+ <div class="card"><h3>Privacy</h3><p>Volunteer names, numbers and decline reasons are kept on this device only and are not sent anywhere. Only collect contact details with the person's permission, and only what you need.</p></div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S;try{S=JSON.parse(localStorage.getItem('st')||'null')}catch(e){}
+S=S||{events:[],avail:{}};
+S.people=S.people||[];S.notes=S.notes||[];S.tpl=S.tpl||'Hi {name}, we would love your help at {event} on {date}. Can you serve? Please reply YES or NO. Thank you!';S.cc=S.cc||'44';
+const save=()=>{try{localStorage.setItem('st',JSON.stringify(S))}catch(e){}};
+const cols=['--coral','--orange','--mint','--sky','--violet','--mag'];
+function go(v,id){
+ $$('.view').forEach(x=>x.classList.remove('on'));
+ const t=$('#'+v);t.classList.add('on');
+ $$('.nav button').forEach(b=>b.toggleAttribute('aria-current',b.dataset.go===(v==='detail'?'events':v)));
+ if(b=$$('.nav button[aria-current]')[0])b.setAttribute('aria-current','page');
+ if(v==='inbox')inbox();bell();if(v==='people')people();if(v==='events')list();if(v==='detail')detail(id);if(v==='availability')days();
+ scrollTo({top:0});
+}
+var b;
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
+function cov(a){const y=a.people.filter(p=>p.r==='yes').length;return{y,need:a.need,pct:Math.min(100,a.need?y/a.need*100:0)}}
+function list(){
+ $('#evList').innerHTML=S.events.length?S.events.map(ev=>{
+  const n=ev.acts.reduce((s,a)=>s+a.need,0),y=ev.acts.reduce((s,a)=>s+Math.min(a.need,cov(a).y),0);
+  return `<div class="card"><h3>${esc(ev.name)} <span class="tag" style="background:var(--violet)">${esc(ev.status||'draft')}</span></h3><small>${esc(ev.date||'Date to be set')} · ${esc(ev.venue||'Venue to be set')}</small>
+  <div class="bar" role="img" aria-label="${y} of ${n} positions filled"><i style="width:${n?y/n*100:0}%"></i></div>
+  <small>${y} of ${n} positions filled</small><br><br><button class="btn alt" data-go="detail" onclick="cur='${ev.id}'">Open event</button></div>`}).join('')
+  :'<div class="empty card">🎈<br>No events yet. Create your first one below.</div>';
+}
+var cur;
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go=detail]');if(g)setTimeout(()=>go('detail',cur))});
+$('#saveEv').onclick=()=>{
+ const n=$('#en').value.trim();if(!n){$('#en').focus();return}
+ S.events.push({id:'e'+Date.now(),name:n,date:$('#ed').value,venue:$('#ev').value.trim(),acts:[],rsvpClose:$('#erc').value,status:'draft'});
+ save();$('#en').value='';$('#newEv').open=false;list();
+};
+function detail(id){
+ const ev=S.events.find(e=>e.id===id);if(!ev)return go('events');
+ const acts=[...ev.acts].sort((a,b)=>a.s.localeCompare(b.s));const blocked=closed(ev)||ev.status==='cancelled';
+ $('#detail').innerHTML=`<button class="btn alt" data-go="events">Back to events</button><h2 style="margin-top:16px">${esc(ev.name)}</h2>
+ <p class="mut">${esc(ev.date||'')} ${esc(ev.venue||'')}</p>
+ <p><span class="tag" style="background:var(--violet)">${esc(ev.status||'draft')}</span> ${ev.rsvpClose?'RSVPs close '+esc(ev.rsvpClose.replace('T',' ')):''}</p>
+ <div class="row" style="margin-bottom:16px"><button class="btn" onclick="setStatus('${ev.id}','published')">Publish</button><button class="btn no" onclick="setStatus('${ev.id}','cancelled')">Cancel event</button><button class="btn alt" onclick="setStatus('${ev.id}','completed')">Mark completed</button><button class="btn alt" onclick="ics('${ev.id}')">Add to calendar</button>${ev.rsvpClose&&closed(ev)?`<button class="btn alt" onclick="reopen('${ev.id}')">Reopen RSVPs</button>`:''}</div>
+ ${acts.length?acts.map((a,i)=>{const c=cov(a),full=c.y>=a.need;return `<div class="card tl" style="--c:var(${cols[i%6]})">
+  <h3>${esc(a.title)}</h3><small>${a.s}–${a.e}</small>
+  <div class="bar"><i style="width:${c.pct}%"></i></div>
+  <span class="tag ${full?'full':'gap'}">${full?'Fully staffed 🎉':(a.need-c.y)+' more needed'}</span> <small>${c.y} of ${a.need} confirmed</small>
+  ${blocked?'<p class="mut">RSVPs are closed.</p>':''}<details style="margin-top:12px" ${blocked?'hidden':''}><summary><b>Respond to this activity</b></summary>
+   <label for="n${a.id}">Your name</label><input id="n${a.id}" autocomplete="name">
+   <div class="row" style="margin-top:12px"><button class="btn yes" onclick="rsvp('${ev.id}','${a.id}','yes')">Yes, I can serve</button><button class="btn no" onclick="document.getElementById('w${a.id}').hidden=false">No, I cannot serve</button></div>
+   <div id="w${a.id}" hidden><label for="r${a.id}">Would you like to let us know why? (Optional)</label>
+   <select id="r${a.id}"><option value="">Prefer not to say</option><option>Unavailable at that time</option><option>Work or study</option><option>Family commitments</option><option>Health or personal</option><option>Already committed elsewhere</option><option>Other</option></select>
+   <button class="btn no" style="margin-top:12px" onclick="rsvp('${ev.id}','${a.id}','no')">Send my answer</button></div></details>
+  <small>${a.people.length?a.people.map(p=>esc(p.n)+(p.r==='yes'?' ✅':' ✖')).join(', '):'No responses yet'}</small>
+  <br><button class="btn alt" style="min-height:40px;padding:6px 16px;margin-top:8px" onclick="delAct('${ev.id}','${a.id}')">Remove</button></div>`}).join(''):'<div class="empty card">🎶<br>No activities yet. Add the first slot below.</div>'}
+ ${ask(ev)}<div class="card"><h3>Add an activity</h3>
+ <label for="at">Activity</label><input id="at" placeholder="Reception">
+ <div class="row"><div><label for="as">Start</label><input id="as" type="time" value="14:00"></div><div><label for="ae">End</label><input id="ae" type="time" value="15:00"></div><div><label for="an">Volunteers needed</label><input id="an" type="number" min="1" value="4"></div></div>
+ <p id="err" role="alert" style="color:var(--coral);font-weight:700"></p>
+ <button class="btn" onclick="addAct('${ev.id}')">Add activity</button></div>`;
+}
+function addAct(id){
+ const ev=S.events.find(e=>e.id===id),t=$('#at').value.trim(),s=$('#as').value,e=$('#ae').value,n=Math.max(1,+$('#an').value||1);
+ if(!t||!s||!e||e<=s){$('#err').textContent='Add a name and make sure the end time is after the start.';return}
+ const o=ev.acts.find(a=>s<a.e&&e>a.s);
+ if(o){$('#err').textContent='Overlaps with “'+o.title+'” ('+o.s+'–'+o.e+'). Change the times to continue.';return}
+ ev.acts.push({id:'a'+Date.now(),title:t,s,e,need:n,people:[]});save();detail(id);
+}
+function delAct(id,aid){const ev=S.events.find(e=>e.id===id);ev.acts=ev.acts.filter(a=>a.id!==aid);save();detail(id)}
+function rsvp(id,aid,r){
+ const ev=S.events.find(e=>e.id===id),a=ev.acts.find(x=>x.id===aid),n=$('#n'+aid).value.trim();
+ if(!n){$('#n'+aid).focus();return}
+ if(closed(ev)||ev.status==='cancelled')return;const reason=r==='no'?$('#r'+aid).value:'';
+ a.people=a.people.filter(p=>p.n.toLowerCase()!==n.toLowerCase());
+ a.people.push({n,r,reason});note(n+(r==='yes'?' will serve at ':' cannot serve at ')+a.title+' ('+ev.name+')');
+ const was=cov(a);detail(id);
+ if(r==='yes'&&was.y>=a.need)confetti();
+}
+function confetti(){
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+ for(let i=0;i<60;i++){const c=document.createElement('i');c.className='conf';
+  c.style.cssText=`left:${Math.random()*100}vw;background:var(${cols[i%6]});animation-delay:${Math.random()*.6}s`;
+  document.body.append(c);setTimeout(()=>c.remove(),3200)}
+}
+function wnum(n){let d=String(n).replace(/[^\d+]/g,'');if(d[0]==='+')return d.slice(1).replace(/\D/g,'');d=d.replace(/\D/g,'');if(d.startsWith('00'))return d.slice(2);if(d[0]==='0')return S.cc+d.slice(1);return d}
+function msg(p,ev){return S.tpl.replace('{name}',p.n.split(' ')[0]).replace('{event}',ev?ev.name:'our next event').replace('{date}',ev&&ev.date?ev.date:'the date to be confirmed')}
+function btns(p,ev){const m=msg(p,ev);let h='';
+ if(wnum(p.w).length>=8)h+=`<a class="btn yes" style="padding:8px 16px;min-height:44px" target="_blank" rel="noopener" href="https://wa.me/${wnum(p.w)}?text=${encodeURIComponent(m)}">WhatsApp</a> `;
+ if(p.e)h+=`<a class="btn alt" style="padding:8px 16px;min-height:44px" href="mailto:${esc(p.e)}?subject=${encodeURIComponent(ev?ev.name:'ServeTogether')}&body=${encodeURIComponent(m)}">Email</a>`;
+ return h||'<small>No contact details</small>'}
+function ask(ev){
+ const done=new Set(ev.acts.flatMap(a=>a.people.map(x=>x.n.toLowerCase())));
+ const todo=S.people.filter(p=>!done.has(p.n.toLowerCase()));
+ return `<div class="card"><h3>Ask people to help</h3>`+(S.people.length?(todo.length?`<p class="mut">${todo.length} not responded yet. Each button opens a ready-to-send message.</p>`+todo.map(p=>`<p><b>${esc(p.n)}</b> <small>${esc(p.r)}</small><br>${btns(p,ev)}</p>`).join(''):'<p>Everyone you added has responded 🎉</p>'):'<p class="mut">Add people first, then contact them from here.</p><button class="btn alt" data-go="people">Add people</button>')+'</div>'}
+function people(){
+ $('#tpl').value=S.tpl;$('#cc').value=S.cc;
+ $('#tpl').onchange=e=>{S.tpl=e.target.value||S.tpl;save()};$('#cc').onchange=e=>{S.cc=e.target.value.replace(/\D/g,'')||'44';save()};
+ $('#pList').innerHTML=S.people.length?S.people.map((p,i)=>`<div class="card"><b>${esc(p.n)}</b> <span class="tag" style="background:var(--violet)">${esc(p.r)}</span><br><small>${esc(p.w)} ${esc(p.e||'')}</small><br><br>${btns(p,null)} <button class="btn alt" style="padding:8px 16px;min-height:44px" onclick="S.people.splice(${i},1);save();people()">Remove</button></div>`).join(''):'<div class="empty card">👋<br>Nobody added yet.</div>'}
+$('#addP').onclick=()=>{const n=$('#pn').value.trim(),w=$('#pw').value.trim(),e=$('#pe').value.trim();
+ if(!n||(!w&&!e)){$('#perr').textContent='Add a name and a WhatsApp number or email.';return}
+ if(w&&wnum(w).length<8){$('#perr').textContent='That number looks too short. Include the full number.';return}
+ $('#perr').textContent='';S.people.push({n,w,e,r:$('#pr').value});save();['pn','pw','pe'].forEach(i=>$('#'+i).value='');people()};
+const closed=ev=>!ev.reopen&&ev.rsvpClose&&new Date(ev.rsvpClose)<new Date();
+function note(t){S.notes.unshift({t,at:new Date().toLocaleString('en-GB'),read:false});S.notes=S.notes.slice(0,100);save();bell()}
+function bell(){const c=S.notes.filter(n=>!n.read).length;$('#bc').textContent=c?' '+c:''}
+function inbox(){S.notes.forEach(n=>n.read=true);save();bell();
+ $('#nList').innerHTML=S.notes.length?S.notes.map(n=>`<div class="card"><b>${esc(n.t)}</b><br><small>${esc(n.at)}</small></div>`).join(''):'<div class="empty card">🔔<br>Nothing yet. Responses and event changes appear here.</div>'}
+function setStatus(id,st){const ev=S.events.find(e=>e.id===id);ev.status=st;note('Event '+ev.name+' is now '+st);detail(id)}
+function reopen(id){const ev=S.events.find(e=>e.id===id);ev.reopen=true;note('RSVPs reopened for '+ev.name);detail(id)}
+function dl(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click()}
+function ics(id){const ev=S.events.find(e=>e.id===id);if(!ev.date){alert('Add a date to this event first.');return}
+ const d=ev.date.replace(/-/g,''),t=x=>d+'T'+x.replace(':','')+'00',q=x=>String(x).replace(/[,;]/g,' ');
+ const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ServeTogether//EN'];
+ (ev.acts.length?ev.acts:[{title:ev.name,s:'09:00',e:'10:00'}]).forEach((a,i)=>L.push('BEGIN:VEVENT','UID:'+ev.id+'-'+i+'@servetogether','DTSTAMP:'+d+'T000000','DTSTART:'+t(a.s),'DTEND:'+t(a.e),'SUMMARY:'+q(ev.name+': '+a.title),'LOCATION:'+q(ev.venue||''),'END:VEVENT'));
+ L.push('END:VCALENDAR');dl(ev.name.replace(/\W+/g,'-')+'.ics','text/calendar',L.join('\r\n'))}
+function backup(){dl('servetogether-backup.json','application/json',JSON.stringify(S,null,2))}
+function wipe(){if(confirm('Delete all events, people and notifications on this device?')){try{localStorage.removeItem('st')}catch(e){}location.reload()}}
+function days(){
+ const st=['','yes','no'],lab={'':'—',yes:'Free',no:'Busy'},el=$('#days');el.innerHTML='';
+ for(let i=0;i<14;i++){const d=new Date();d.setDate(d.getDate()+i);const k=d.toISOString().slice(0,10);
+  const bt=document.createElement('button');bt.dataset.s=S.avail[k]||'';
+  bt.setAttribute('aria-label',d.toDateString()+': '+(lab[S.avail[k]||''])); 
+  bt.innerHTML=`<b>${d.toLocaleDateString('en-GB',{weekday:'short'})}</b><br>${d.getDate()}<br>${lab[S.avail[k]||'']}`;
+  bt.onclick=()=>{S.avail[k]=st[(st.indexOf(S.avail[k]||'')+1)%3];if(!S.avail[k])delete S.avail[k];save();days()};
+  el.append(bt)}
+}
+go('home');
+</script>
+</body>
+</html>
